@@ -1,0 +1,172 @@
+
+
+
+<!--BASE.HTML is special type of file in flask where the repitive elements like navbars and links and cdn's can be written into one html so 
+for future files we can reference base.html and call the code. It is similar to the purpose of a function in programming.
+-->
+
+<!DOCTYPE html> 
+<html lang="en">
+    <head>
+        {% block head %}{% endblock %}
+        <meta charset="UTF-8">
+        <!--bootstrap-->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script type="module">
+          // module imports
+          import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-analytics.js";
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
+          import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore.js'
+          import { getAuth, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js';
+          
+          // database configuration
+          const firebaseConfig = {
+            apiKey: "AIzaSyBqAatVFIxOEozHBRiZfn6csXbJC21-dIE",
+            authDomain: "fbla-gpa.firebaseapp.com",
+            projectId: "fbla-gpa",
+            storageBucket: "fbla-gpa.appspot.com",
+            messagingSenderId: "282841612653",
+            appId: "1:282841612653:web:eba36daa298b441fef1a64",
+            measurementId: "G-E7DL1QBV84"
+          };
+          
+          // Initialize Firebase
+          const app = initializeApp(firebaseConfig);
+          const analytics = getAnalytics(app);
+          const provider = new GoogleAuthProvider();
+          const auth = getAuth();
+          
+          // google login function
+          function googleLogin(){
+              signInWithPopup(auth, provider)
+                .then((result) => {
+                  const credential = GoogleAuthProvider.credentialFromResult(result);
+                  const token = credential.accessToken;
+                  const user = result.user;
+                  // gives urvor login information
+                  $.ajax({
+                      url: '/login',
+                      type: 'POST',
+                      data: {
+                          creds: JSON.stringify(user) // data for server
+                      },
+                      success: function (response) {
+                          window.location.assign('/calculator'); // on success route to calculator page
+                      },
+                      error: function (response) {
+                          alert(response)
+                      }
+                  });
+                }).catch((error) => {
+                  console.log(error.customData)
+                  const errorCode = error.code;
+                  const errorMessage = error.message;
+                  const email = error.customData.email;
+                  const credential = GoogleAuthProvider.credentialFromError(error);
+                });
+          }
+          
+          // logout function
+          function logout(){
+              $.ajax({
+                      url: '/logout', // logout link on server
+                      type: 'POST',
+                      success: function (response) {
+                          window.location.assign('/'); // go to home page
+                      },
+                      error: function (response) {
+                          alert(response)
+                      }
+                  });
+          }
+          // replace special characters with alternates
+          const escapeHTML = str =>
+            str.replace(
+              /[&<>'"]/g,
+              tag =>
+                ({
+                  '&': '&amp;',
+                  '<': '&lt;',
+                  '>': '&gt;',
+                  "'": '&#39;',
+                  '"': '&quot;'
+                }[tag] || tag)
+            );
+
+            // sets scope of functions
+          window.googleLogin = googleLogin;
+          window.logout = logout;
+          window.escapeHTML = escapeHTML;
+          </script>
+  </head>
+    <title>{% block title %} - GPA Calculator {% endblock %}</title>
+    <body>
+        <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Container wrapper -->
+        <div class="container-fluid">
+          <!-- Toggle button -->
+
+          <a class="navbar-brand px-5" href="/">
+            <p>GPA Calculator</p>
+          </a>
+
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-mdb-toggle="collapse"
+            data-mdb-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+          </button>
+
+          <!-- Collapsible wrapper -->
+          <div class="collapse navbar-collapse" id="main-nav">
+            <!-- Navbar brand -->
+            
+            <!-- Left links -->
+            <ul class="navbar-nav ms-auto px-5">
+
+              
+              {% if logged_in %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/calculator">
+                    Calculator
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="logout()">
+                    Logout
+                  </a>
+                </li>
+              {% else %}
+                <li>
+                  <a type="button" class="nav-link btn" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="googleLogin()">
+                    Login
+                  </a>
+                  
+                </li>
+              {% endif %}
+              
+            </ul>
+            <!-- Left links -->
+          </div>
+          <!-- Collapsible wrapper -->
+
+          <!-- Right elements -->
+        </div>
+        <!-- Container wrapper -->
+      </nav>
+<!-- Navbar -->
+        
+        {% block body %}
+        {% endblock %}
+    </body>
+    <!-- Imports library for asynchronous calls to server -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</html>

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+{% block head %}
+<script>
+    // update classes to server
+    function updateClasses(){
+        $.ajax({
+            url: '/update_calc', // server url
+            type: "POST",
+            data: {
+                "names": $("div input[name='name[]']").map( function() { return $(this).val(); } ).get(),
+                "types": $("div select[name='type[]']").map( function() { return $(this).val(); } ).get(),
+                "num_grades": $("div input[name='num_grade[]']").map( function() { return $(this).val(); } ).get()
+            }, // data for server
+            success: function (response) {
+                window.location.href = '/calculator'; // reload page if succesful
+            },
+            error: function (response) {
+            alert("Oops something went wrong check for blank input fields...")
+                }
+        });
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+
+
+<!-- this is our body note: anytime you see "{}" it is a flask tag that has embedded javascript-->
+<div class="container-xxl">
+    <h1 class="text-center p-3 fw-bold">GPA Calculator</h1>
+
+    <hr>
+
+    <div class="container p-3">
+        <!-- checks if we have calculated gpa before -->
+        {% if w_gpa %}
+        <h2 class="fw-bold py-1">Weighted GPA is : {{w_gpa | round(2)}}</h2>
+
+        <h2 class="fw-bold py-1">Unweighted GPA is : {{uw_gpa | round(2)}}</h2>
+        {%endif%}
+
+    </div>
+
+    <!-- beginning of the forms -->
+    <div class="container"  id="show_form">
+        <!-- displays all the previously inputted forms and checks if a user has any classes AKA if the user is new user-->
+        {% if classes %}
+            <!-- looping through all the classes -->
+            {% for class_name, info in classes.items() %}
+                <!-- each class has corresponding values we will call "info" info contains the type of class i.e "AP Standard .. " and the grade for that class.-->
+                <div class="row">
+                    <div class="form-group col-md-3 py-1">
+                        <!-- we display the class name-->
+                        <label for="class_name" class="fw-bold">Class Name</label>
+                        <!-- we have "[]" so the backend can accept multiple inputs-->
+                        <input name = "name[]" class="form-control class_name" value="{{class_name}}" placeholder="Science , History etc .. "></input>
+                    </div>
+
+                    <div class="form-group col-md-3 py-1">
+                        <label for="inputState" class="fw-bold">Class Type</label>
+                        <select id="inputState" name = "type[]" class="form-select">
+                            <!-- if class is honors choose honors. etc... -->
+                            {% if info[0] == "Honors" %}
+                            <option value="Honors" selected>Honors</option>
+                            <option value="Standard">Standard</option>
+                            <option value="AP">Advance Placement(AP)</option>
+                            {% elif info[0] == "Standard"%}
+                            <option value="Honors">Honors</option>
+                            <option value="Standard" selected>Standard</option>
+                            <option value="AP">Advance Placement(AP)</option>
+                            {% else %}
+                            <option value="Honors">Honors</option>
+                            <option value="Standard">Standard</option>
+                            <option value="AP" selected>Advance Placement(AP)</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-3 py-1">
+                        <label for="num_grade" class="fw-bold">Grade</label>
+                        <!-- class grade (default is previously saved)-->
+                        <input id="num_grade" type="number" name = "num_grade[]" class="form-control class_grade" value={{info[1]}}></input>
+                    </div>
+                    
+                    <!-- add button instead of remove for final class in list -->
+                    {%if loop.index == classes.keys()|length%}
+                        <div class="py-4 ps-2 col-md-3">
+                            <button class="btn btn-success"id="add_item_btn">Add</button>
+                        </div>
+                    <!-- remove button for all other classes-->
+                    {% else %}
+                        <div class="col-md-3 py-4">
+                            <button class="btn btn-danger" id="remove_item_btn">Remove</button>
+                        </div>
+                    {%endif%}
+                </div>
+            {% endfor %}
+        <!-- if no classes are present, load in a new form-->
+        {%else%}
+            <div class="row">
+                <div class="form-group col-md-3 py-1">
+                    <label for="class_name" class="fw-bold" >Class Name</label>
+                    <input name = "name[]" class="form-control" value="Null" placeholder="Science , History etc .. ">
+                </div>
+                <div class="form-group col-md-3 py-1">
+                    <label for="inputState" class="fw-bold" >Class Type</label>
+                    <select id="inputState" name = "type[]" class="form-select">
+                        <option value="AP">Advance Placement(AP)</option>
+                        <option value="Honors">Honors</option>
+                        <option selected value="Standard">Standard</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3 py-1">
+                    <label for="num_grade" class="fw-bold">Grade</label>
+                    <input id="num_grade" type="number" name = "num_grade[]" class="form-control" value=100></input>
+                </div>
+
+                
+                <div class="py-4 ps-2 col-md-3">
+                    <button class="btn btn-success"id="add_item_btn">Add</button>
+                </div>
+            </div> 
+        {%endif%}
+    </div>
+
+    <!-- when we click calculate we send a request to the server updating all of our classes AND calculating our GPA :)-->
+    <div class="form-element py-3 text-center">
+        <button onclick="updateClasses()" class="btn btn-success" id="addCalculate">Calculate!</button>
+    </div>
+</div>
+
+<script>
+    // when page loads up
+    $(document).ready(function(webpage){
+        // add new class field when add button clicked
+        $("#add_item_btn").click(function(current){
+
+            //prevents page from reloading when field added creating a smooth experience
+            current.preventDefault();
+
+            // adds new field on top of previous ones
+            $("#show_form").prepend(`
+            <div class="row">
+                <div class="form-group col-md-3 py-1">
+                    <label for="class_name" class="fw-bold" >Class Name</label>
+                    <input name = "name[]" class="form-control" value="Null" placeholder="Science , History etc .. ">
+                </div>
+                <div class="form-group col-md-3 py-1">
+                    <label for="inputState" class="fw-bold" >Class Type</label>
+                    <select id="inputState" name = "type[]" class="form-select">
+                        <option value="AP">Advance Placement(AP)</option>
+                        <option value="Honors">Honors</option>
+                        <option selected value="Standard">Standard</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3 py-1">
+                    <label for="num_grade" class="fw-bold">Grade</label>
+                    <input id="num_grade" type="number" name = "num_grade[]" class="form-control" value=100></input>
+                </div>
+
+                
+                <div class="col-md-3 py-4">
+                    <button class="btn btn-danger" id="remove_item_btn">Remove</button>
+                </div>
+            </div> 
+            `)
+        });
+
+        // remove a class when remove button clicked
+        $(document).on('click','#remove_item_btn',function(current){
+            //prevents page from reloading when field removed making for a fluid experience
+            current.preventDefault();
+
+            // remove whole referenced class object
+            let form_field = $(this).parent().parent();
+            $(form_field).remove()
+        })
+    });
+</script>
+{% endblock %}

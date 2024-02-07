@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block body %}
+<div class="container-xxl">
+    <h1 class="text-center p-3">About</h1>
+    <hr>
+    <p class="h3 text-center py-1">
+        Our site helps calculate the Weighted and Unweighted GPA of students 
+    </p>
+    <p class="h3 text-center">
+        In order to use our site you must login with a <em>Google account</em>
+    </p>
+    <hr>
+    <h2 class="text-center">How to use our Calculator ...</h2>
+    <!--bootstrap accordion-->
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+              Adding a Class
+            </button>
+          </h2>
+          <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">To add a class, click the <em class="text-success">green</em> "Add" button next to the bottom most class. </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+              Removing a Class
+            </button>
+          </h2>
+          <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">To remove a class, click the <em class="text-danger">red "Remove"</em>  button next to the class.</div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+              Setting Class Information
+            </button>
+          </h2>
+          <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">
+                <ul><strong>Class Name:</strong> To enter the class name, enter the name in the input placed under the tag: "Class Name" (<em class="fw-bold">unique</em>)</ul>
+                <ul><strong>Class Type:</strong> To enter the class type, choose from the dropdown placed under the tag: "Class Type" </ul>
+                <ul><strong>Class Grade:</strong> To enter the class grade, enter the grade in the input placed under the tag: "Grade" </ul>
+            </div>
+          </div>
+        </div>
+    </div>
+    <p class="text-end py-1">- Made by students Prateek Kalusani & Yaozhou Xiong </p>
+</div>
+
+
+{% endblock %}
