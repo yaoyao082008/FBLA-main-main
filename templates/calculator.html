@@ -63,7 +63,7 @@
         <h2 class="fw-bold py-1 text-center">Unweighted GPA is : {{uw_gpa | round(2)}}</h2>
 
         {% if lowest %}
-        <p class="h6 py-1 text-center">Currently you're lowest  grade is {{lowest[0]}} if you had an A in this class you're gpa would be {{uh_gpa}}(unweighted) and {{h_gpa}}(weighted)</h2>
+        <p class="h6 py-1 text-center">Currently you're lowest  grade is {{lowest[0]}} if you had an A in this class you're gpa would be {{uh_gpa | round(2)}}(unweighted) and {{h_gpa | round(2)}}(weighted)</h2>
         {%endif%}
         {%endif%}
 
