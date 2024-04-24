@@ -58,7 +58,7 @@
     <div class="container p-3">
         <!-- checks if we have calculated gpa before -->
         {% if w_gpa %}
-        <h2 class="fw-bold py-1 text-center">Weighted GPA is : {{w_gpa | round(2)}}</h2>
+        <h2 class="fw-bold py-1 text-center">Weighted GPA : {{w_gpa | round(2)}}</h2>
 
         <h2 class="fw-bold py-1 text-center">Unweighted GPA is : {{uw_gpa | round(2)}}</h2>
 
@@ -145,7 +145,7 @@
 
                 
                 <div class="py-4 ps-2 col-md-3">
-                    <button class="btn btn-success"id="add_item_btn">Add</button>
+                    <button class="btn btn-success"id="add_item_btn">Add </button>
                 </div>
             </div> 
         {%endif%}
@@ -153,7 +153,7 @@
 
     <!-- when we click calculate we send a request to the server updating all of our classes AND calculating our GPA :)-->
     <div class="form-element py-3 text-center">
-        <button onclick="updateClasses()" class="btn btn-success" id="addCalculate">Calculate!</button>
+        <button onclick="updateClasses()" class="btn btn-success" id="addCalculate">Calculate! !</button>
     </div>
 
     <div class="text-end">
