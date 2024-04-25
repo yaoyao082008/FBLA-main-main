@@ -37,7 +37,7 @@ def calculator():
         lowest = [1000, None]
         for n in classes.keys(): # captures lowest grade
             c = classes[n]
-            low= int(c[1])
+            low= float(c[1])
             if lowest[0]>low:
                 lowest[0]=low
                 lowest[1] = n
@@ -89,7 +89,7 @@ def update_calc(dynamic=None):
     types = request.form.getlist("types[]")
     num_grades = request.form.getlist("num_grades[]")
     for i in num_grades:
-        i = int(i)
+        i = float(i)
         if i < 0 or i > 100:
             return redirect("/update_calculator")
 
@@ -97,7 +97,7 @@ def update_calc(dynamic=None):
 
     # data formating
     for i in range(len(names)):
-        num_grades[i] = int(num_grades[i])
+        num_grades[i] = float(num_grades[i])
         classes[names[i]] = [types[i], num_grades[i], num_gpa_calc(types[i], num_grades[i], False), num_gpa_calc(types[i], num_grades[i], True)]
         
     # updates classes in database
