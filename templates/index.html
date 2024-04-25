@@ -51,6 +51,15 @@
           </div>
         </div>
     </div>
+    {% if logged_in %}
+    <div class="py-5 text-center">
+      <a href="/calculator" class="btn btn-success fw-bold"> CALCULATE !</a>
+    </div>
+    {% else %}
+    <div class="py-5 text-center">
+      <a onclick="googleLogin()" class="btn btn-success fw-bold"> LOG IN!</a>
+    </div>
+    {% endif %}
     <p class="text-end py-1">- Made by students Prateek Kalusani & Yaozhou Xiong </p>
 </div>
 
