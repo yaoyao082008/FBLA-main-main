@@ -34,13 +34,19 @@
             success: function (response) {
                 console.log(response[""])
                 document.getElementById("update").innerHTML = "Saved! &#x2713;"
+
+                setTimeout(function(){
+                    document.getElementById("update").innerHTML = "Updating... ";
+                }, 2000);
+                
             },
             
         });
     }
 
-    var dynamicInterval = setInterval(dynamicUpdate, 5000);
-    var updateTextInterval = setInterval(function(){document.getElementById("update").innerHTML = "Updating..."}, 2000);
+    
+    //var dynamicInterval = setInterval(dynamicUpdate, 5000);
+    //var updateTextInterval = setInterval(function(){document.getElementById("update").innerHTML = "Updating..."}, 2000);
 </script>
 {% endblock %}
 
@@ -79,7 +85,7 @@
                         <!-- we display the class name-->
                         <label for="class_name" class="fw-bold">Class Name</label>
                         <!-- we have "[]" so the backend can accept multiple inputs-->
-                        <input name = "name[]" class="form-control class_name" value="{{class_name}}" placeholder="Science , History etc .. "></input>
+                        <input name = "name[]" class="form-control class_name" value="{{class_name}}" placeholder="Science , History etc .. " id="input_field"></input>
                     </div>
 
                     <div class="form-group col-md-3 py-1">
@@ -105,7 +111,7 @@
                     <div class="form-group col-md-3 py-1">
                         <label for="num_grade" class="fw-bold">Grade</label>
                         <!-- class grade (default is previously saved)-->
-                        <input id="num_grade" type="number" name = "num_grade[]" class="form-control class_grade" value={{info[1]}}></input>
+                        <input id="input_field" type="number" name = "num_grade[]" class="form-control class_grade" value={{info[1]}}></input>
                     </div>
                     
                     <!-- add button instead of remove for final class in list -->
@@ -126,7 +132,7 @@
             <div class="row">
                 <div class="form-group col-md-3 py-1">
                     <label for="class_name" class="fw-bold" >Class Name</label>
-                    <input name = "name[]" class="form-control" value="Null" placeholder="Science , History etc .. ">
+                    <input name = "name[]" class="form-control" value="Null" placeholder="Science , History etc .. " id="input_field">
                 </div>
                 <div class="form-group col-md-3 py-1">
                     <label for="inputState" class="fw-bold" >Class Type</label>
@@ -138,7 +144,7 @@
                 </div>
                 <div class="form-group col-md-3 py-1">
                     <label for="num_grade" class="fw-bold">Grade</label>
-                    <input id="num_grade" type="number" name = "num_grade[]" class="form-control" value=100></input>
+                    <input id="input_field" type="number" name = "num_grade[]" class="form-control" value=100></input>
                 </div>
 
                 
@@ -162,6 +168,49 @@
 <script>
     // when page loads up
     $(document).ready(function(webpage){
+
+        
+        
+
+        //detects when we change something in the dropdown so we can dynamically update it
+        function DropDownDetectorUpdate(){
+
+            //we get all elements with a drop down
+            const DropDownDetector= document.querySelectorAll("#inputState")
+
+            //we listen for a change in the element and if there is we save it 
+            for (let i = 0; i < DropDownDetector.length; i++) {
+                DropDownDetector[i].addEventListener("change" , () => {
+                    dynamicUpdate();
+                });
+            } 
+        }
+
+
+        //detects when we change something in the input field so we can dynamically update it
+        function InputDetectorUpdate(){
+
+            //we get all elements with a input field
+            const InputChangeDetector= document.querySelectorAll("#input_field")
+
+            //we listen for a change in the element and if there is we save it 
+            for (let i = 0; i < InputChangeDetector.length; i++) {
+
+                InputChangeDetector[i].addEventListener("change" , () => {
+                    dynamicUpdate();
+                });
+            }
+
+        }
+
+
+        
+        //call our dynamic update
+        DropDownDetectorUpdate();
+        InputDetectorUpdate();
+        
+
+
         // add new class field when add button clicked
         $("#add_item_btn").click(function(current){
 
@@ -173,7 +222,7 @@
             <div class="row">
                 <div class="form-group col-md-3 py-1">
                     <label for="class_name" class="fw-bold" >Class Name</label>
-                    <input name = "name[]" class="form-control" value="Null" placeholder="Science , History etc .. ">
+                    <input name = "name[]" class="form-control" value="Null" placeholder="Science , History etc .. " id="input_field">
                 </div>
                 <div class="form-group col-md-3 py-1">
                     <label for="inputState" class="fw-bold" >Class Type</label>
@@ -185,7 +234,7 @@
                 </div>
                 <div class="form-group col-md-3 py-1">
                     <label for="num_grade" class="fw-bold">Grade</label>
-                    <input id="num_grade" type="number" name = "num_grade[]" class="form-control" value=100></input>
+                    <input id="input_field" type="number" name = "num_grade[]" class="form-control" value=100></input>
                 </div>
 
                 
@@ -194,6 +243,11 @@
                 </div>
             </div> 
             `)
+
+            //updates how many input fields we have to look for
+            dynamicUpdate();
+            DropDownDetectorUpdate();
+            InputDetectorUpdate();
         });
 
         // remove a class when remove button clicked
@@ -204,6 +258,11 @@
             // remove whole referenced class object
             let form_field = $(this).parent().parent();
             $(form_field).remove()
+
+            //updates how many input fields we have to look for
+            dynamicUpdate();
+            DropDownDetectorUpdate();
+            InputDetectorUpdate();
         })
     });
 </script>
